@@ -50,7 +50,7 @@ try:
         "-w", "/app",
         "node:22-trixie-slim",
         "bash", "-c",
-        "apt-get update && apt-get install -y git python3 make g++ && "
+        "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y git python3 build-essential && "
         "corepack enable && "
         "pnpm install --frozen-lockfile && "
         "pnpm build"
