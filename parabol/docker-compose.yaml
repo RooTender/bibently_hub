@@ -68,7 +68,7 @@ services:
 
 networks:
   parabol-net:
-  web:
+  bibently_web:
     external: true
 
 volumes:

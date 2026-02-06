@@ -14,7 +14,7 @@ services:
       - bibently_web
 
 networks:
-  web:
+  bibently_web:
     external: true
 
 volumes:
