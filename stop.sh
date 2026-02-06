@@ -6,7 +6,4 @@ cd ./parabol
 docker compose down
 cd ..
 
-echo "Stopping Caddy..."
-docker compose down
-
 echo "All services stopped."
