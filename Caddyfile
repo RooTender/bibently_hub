@@ -1,3 +1,0 @@
-parabol.bib {
-    reverse_proxy parabol-app:10001
-}

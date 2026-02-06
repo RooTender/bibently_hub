@@ -64,12 +64,9 @@ services:
       - parabol-data:/home/node/parabol/self-hosted
     networks:
       - parabol-net
-      - bibently_web
 
 networks:
   parabol-net:
-  bibently_web:
-    external: true
 
 volumes:
   pgdata:
