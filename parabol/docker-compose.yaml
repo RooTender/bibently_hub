@@ -64,7 +64,7 @@ services:
       - parabol-data:/home/node/parabol/self-hosted
     networks:
       - parabol-net
-      - web
+      - bibently_web
 
 networks:
   parabol-net:

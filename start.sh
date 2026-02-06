@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-NETWORK_NAME="web"
+NETWORK_NAME="bibently_web"
 
 if ! docker network inspect "$NETWORK_NAME" >/dev/null 2>&1; then
   echo "Creating docker network: $NETWORK_NAME"
