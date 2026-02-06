@@ -10,14 +10,14 @@ BASE_IMAGE = "parabol:base"
 IMAGE = "parabol:local"
 LOCAL_DOCKERFILE = os.path.abspath("injector.dockerfile")
 
-def promote_to_enterprise():
+def replace_in_env(to_replace: str, replacement: str):
     with open(ENV_PATH, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
     with open(ENV_PATH, "w", encoding="utf-8") as f:
         for line in lines:
-            if line.strip().startswith("# IS_ENTERPRISE"):
-                f.write("IS_ENTERPRISE=true\n")
+            if line.strip().startswith(to_replace):
+                f.write(f"{replacement}\n")
             else:
                 f.write(line)
 
@@ -88,7 +88,8 @@ try:
     run(["docker", "cp", f"{cid}:/home/node/parabol/.env.example", "./.env"])
     run(["docker", "rm", cid])
 
-    promote_to_enterprise()
+    replace_in_env("# IS_ENTERPRISE", "IS_ENTERPRISE=true")
+    replace_in_env("PORT='3000'", "PORT='10001'")
 
 finally:
     shutil.rmtree(tmp, ignore_errors=True)
