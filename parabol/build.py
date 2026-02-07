@@ -36,7 +36,6 @@ def patch_env(env_path):
     replace("HOST", ip)
     replace("PORT", port)
     replace("PROTO", "http")
-    replace("CDN_BASE_URL", f"//{ip}:{port}")
 
     with open(env_path, "w", encoding="utf-8") as f:
         f.writelines(lines)
