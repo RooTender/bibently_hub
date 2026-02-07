@@ -66,13 +66,11 @@ try:
     run([
         "docker", "run", "--rm",
         "-v", f"{tmp}:/app",
+        "--env-file", env_real,
         "-w", "/app",
         "node:22-trixie-slim",
         "bash", "-c",
-        "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y git python3 build-essential && "
-        "corepack enable && "
-        "pnpm install --frozen-lockfile && "
-        "pnpm build"
+        "pnpm install --frozen-lockfile && pnpm build"
     ])
 
     env = os.environ.copy()
