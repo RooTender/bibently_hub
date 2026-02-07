@@ -100,6 +100,9 @@ try:
 
     print("Built image:", IMAGE)
 
+    shutil.copy(env_real, ENV_PATH)
+    print("Saved .env to project directory")
+
 finally:
     shutil.rmtree(tmp, ignore_errors=True)
 
