@@ -6,30 +6,45 @@ import json
 
 REPO = "https://github.com/ParabolInc/parabol.git"
 ENV_PATH = "./.env"
+COMPOSE_PATH = "./docker-compose.yaml"
+
 BASE_IMAGE = "parabol:base"
 IMAGE = "parabol:local"
 LOCAL_DOCKERFILE = os.path.abspath("injector.dockerfile")
 
-def replace_in_env(to_replace: str, replacement: str):
-    with open(ENV_PATH, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-
-    with open(ENV_PATH, "w", encoding="utf-8") as f:
-        for line in lines:
-            if line.strip().startswith(to_replace):
-                f.write(f"{replacement}\n")
-            else:
-                f.write(line)
+ip = input("IP address for build: ").strip()
+port = input("Port: ").strip()
 
 def run(cmd, env=None):
     print(">", " ".join(cmd))
     subprocess.run(cmd, check=True, env=env)
 
+def patch_env(env_path):
+    with open(env_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    def replace(key, value):
+        nonlocal lines
+        new = []
+        for line in lines:
+            if line.strip().startswith(key):
+                new.append(f"{key}='{value}'\n")
+            else:
+                new.append(line)
+        lines = new
+
+    replace("HOST", ip)
+    replace("PORT", port)
+    replace("PROTO", "http")
+    replace("CDN_BASE_URL", f"//{ip}:{port}")
+
+    with open(env_path, "w", encoding="utf-8") as f:
+        f.writelines(lines)
+
 tmp = tempfile.mkdtemp(prefix="parabol-build-", dir=os.path.expanduser("~"))
 print("tmp:", tmp)
 
 try:
-    # clone repo
     run(["git", "clone", "--depth", "1", REPO, tmp])
 
     with open(os.path.join(tmp, "package.json")) as f:
@@ -43,7 +58,11 @@ try:
         text=True
     ).strip()
 
-    # build JS
+    env_example = os.path.join(tmp, ".env.example")
+    env_real = os.path.join(tmp, ".env")
+    shutil.copy(env_example, env_real)
+    patch_env(env_real)
+
     run([
         "docker", "run", "--rm",
         "-v", f"{tmp}:/app",
@@ -59,7 +78,6 @@ try:
     env = os.environ.copy()
     env["DOCKER_BUILDKIT"] = "1"
 
-    # build upstream base image
     run([
         "docker", "build",
         "--build-arg", f"_NODE_VERSION={node_version}",
@@ -70,7 +88,6 @@ try:
         tmp
     ], env=env)
 
-    # build your local extension Dockerfile
     run([
         "docker", "build",
         "-f", LOCAL_DOCKERFILE,
@@ -80,16 +97,22 @@ try:
 
     print("Built image:", IMAGE)
 
-    cid = subprocess.check_output(
-        ["docker", "create", IMAGE],
-        text=True
-    ).strip()
-
-    run(["docker", "cp", f"{cid}:/home/node/parabol/.env.example", "./.env"])
-    run(["docker", "rm", cid])
-
-    replace_in_env("# IS_ENTERPRISE", "IS_ENTERPRISE=true")
-    replace_in_env("PORT='3000'", "PORT='10001'")
-
 finally:
     shutil.rmtree(tmp, ignore_errors=True)
+
+def patch_compose(ip, port):
+    with open(COMPOSE_PATH, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    for i, line in enumerate(lines):
+        if "ports:" in line:
+            indent = len(line) - len(line.lstrip(" "))
+            new_indent = " " * (indent + 2)
+            lines[i + 1] = f'{new_indent}- "{ip}:{port}:{port}"\n'
+            break
+
+    with open(COMPOSE_PATH, "w", encoding="utf-8") as f:
+        f.writelines(lines)
+
+patch_compose(ip, port)
+print("docker-compose.yaml patched")

@@ -55,7 +55,7 @@ services:
       parabol-init:
         condition: service_completed_successfully
     ports:
-      - "127.0.0.1:10001:10001"
+      - "xxx"
     env_file:
       - .env
     environment:
