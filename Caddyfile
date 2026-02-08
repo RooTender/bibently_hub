@@ -1,0 +1,5 @@
+:80 {
+    handle_path /parabol/* {
+        reverse_proxy parabol:3000
+    }
+}
