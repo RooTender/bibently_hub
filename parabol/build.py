@@ -5,7 +5,7 @@ import os
 import json
 import sys
 
-REPO = "[https://github.com/ParabolInc/parabol.git](https://github.com/ParabolInc/parabol.git)"
+REPO = "https://github.com/ParabolInc/parabol.git"
 ENV_PATH = "./.env"
 IMAGE = "parabol:local"
 LOCAL_DOCKERFILE = os.path.abspath("setup.dockerfile")
