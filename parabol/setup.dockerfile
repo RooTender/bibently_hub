@@ -23,8 +23,6 @@ COPY packages ./packages
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
     corepack enable pnpm && pnpm install --frozen-lockfile
 
-RUN tar -cf /node_modules.tar node_modules
-
 COPY . .
 RUN pnpm build
 
@@ -36,8 +34,7 @@ ENV NODE_ENV=production
 
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /node_modules.tar /tmp/node_modules.tar
-RUN tar -xf /tmp/node_modules.tar -C . && rm /tmp/node_modules.tar
+COPY --from=builder /app/node_modules ./node_modules
 
 USER node
 EXPOSE 3000
