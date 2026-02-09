@@ -9,6 +9,8 @@ import re
 
 REPO = "https://github.com/ParabolInc/parabol.git"
 ENV_PATH = "./.env"
+PATCH_FILE = "patch.js"
+
 IMAGE = "parabol:local"
 LOCAL_DOCKERFILE = os.path.abspath("setup.dockerfile")
 CACHE_DIR = os.path.abspath(".docker-cache")
@@ -84,6 +86,8 @@ def main():
         shutil.copyfile(ENV_PATH, os.path.join(tmp, ".env"))
 
         sha = out(["git", "-C", tmp, "rev-parse", "HEAD"], env)
+
+        shutil.copyfile(PATCH_FILE, os.path.join(tmp, PATCH_FILE))
 
         build_cmd = [
             "docker", "buildx", "build",

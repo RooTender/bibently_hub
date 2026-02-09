@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git ca-certific
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/*/package.json packages/*/
+COPY patch.js .
 
 RUN node patch.js
 
