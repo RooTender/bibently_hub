@@ -28,7 +28,7 @@ RUN pnpm build
 RUN pnpm prune --prod
 
 ######## RUNTIME ########
-FROM node:22-alpine AS runtime
+FROM parabol:base AS runtime
 WORKDIR /home/node/parabol
 
 ENV NODE_ENV=production
@@ -36,6 +36,6 @@ ENV NODE_ENV=production
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 
 USER node
-CMD ["node", "dist/web.js"]
