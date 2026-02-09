@@ -26,4 +26,4 @@ RUN corepack enable pnpm \
  && pnpm install --no-frozen-lockfile
 
 RUN pnpm build
-RUN pnpm prune --prod
+# RUN pnpm prune --prod
