@@ -18,15 +18,12 @@ ENV CI=true
 RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-COPY pnpm-lock.yaml package.json pnpm-workspace.yaml ./
-COPY packages ./packages
+COPY . .
 
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
     corepack enable pnpm \
- && pnpm install --frozen-lockfile
-
-COPY . .
-RUN pnpm build \
+ && pnpm install --frozen-lockfile --ignore-scripts \
+ && pnpm build \
  && pnpm prune --prod
 
 ######## RUNTIME ########
