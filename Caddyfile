@@ -7,13 +7,5 @@
         reverse_proxy parabol-app:3000
     }
 
-    handle /static/* {
-        reverse_proxy parabol-app:3000
-    }
-
-    handle /auth/* {
-        reverse_proxy parabol-app:3000
-    }
-
     respond "gateway alive"
 }

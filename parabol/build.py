@@ -62,7 +62,7 @@ try:
         "apt-get update && apt-get install -y git && "
         "corepack enable && "
         "pnpm install --frozen-lockfile && "
-        "pnpm build"
+        "PUBLIC_URL=/parabol pnpm build"
     ])
 
     env = os.environ.copy()
