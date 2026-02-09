@@ -15,14 +15,14 @@ ENV DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL}
 ENV CI=true
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git ca-certificates build-essential python3 \
+    git ca-certificates build-essential python3 pkg-config libvips-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . .
-
+COPY package.json pnpm-lock.yaml patch.js ./
 RUN node patch.js
 
-RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
-    corepack enable pnpm && pnpm install --frozen-lockfile
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
+COPY . .
+
 RUN pnpm build
 RUN pnpm prune --prod
