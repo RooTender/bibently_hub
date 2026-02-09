@@ -2,12 +2,18 @@
     auto_https off
 }
 
-http://0.0.0.0:80 {
-    @parabol path /parabol/* /parabol
-    handle @parabol {
-        uri strip_prefix /parabol
+:80 {
+    handle_path /parabol* {
         reverse_proxy parabol-app:3000
     }
 
-    respond / "gateway alive"
+    handle /static/* {
+        reverse_proxy parabol-app:3000
+    }
+
+    handle /auth/* {
+        reverse_proxy parabol-app:3000
+    }
+
+    respond "gateway alive"
 }

@@ -3,6 +3,7 @@ import tempfile
 import shutil
 import os
 import json
+import re
 
 REPO = "https://github.com/ParabolInc/parabol.git"
 ENV_PATH = "./.env"
@@ -10,16 +11,24 @@ BASE_IMAGE = "parabol:base"
 IMAGE = "parabol:local"
 LOCAL_DOCKERFILE = os.path.abspath("setup.dockerfile")
 
-def promote_to_enterprise():
-    with open(ENV_PATH, "r", encoding="utf-8") as f:
-        lines = f.readlines()
+def replace_line(path, key, replacement):
+    pattern = re.compile(rf"^\s*#?\s*{re.escape(key)}=.*$")
+    replaced = False
+    out_lines = []
 
-    with open(ENV_PATH, "w", encoding="utf-8") as f:
-        for line in lines:
-            if line.strip().startswith("# IS_ENTERPRISE"):
-                f.write("IS_ENTERPRISE=true\n")
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            if pattern.match(line):
+                out_lines.append(replacement + "\n")
+                replaced = True
             else:
-                f.write(line)
+                out_lines.append(line)
+
+    if not replaced:
+        out_lines.append(replacement + "\n")
+
+    with open(path, "w", encoding="utf-8") as f:
+        f.writelines(out_lines)
 
 def run(cmd, env=None):
     print(">", " ".join(cmd))
@@ -88,7 +97,9 @@ try:
     run(["docker", "cp", f"{cid}:/home/node/parabol/.env.example", "./.env"])
     run(["docker", "rm", cid])
 
-    promote_to_enterprise()
+    replace_line(ENV_PATH, "# IS_ENTERPRISE", "IS_ENTERPRISE=true")
+    replace_line(ENV_PATH, "HOST=", "HOST='10.127.80.126'")
+    replace_line(ENV_PATH, "PROTO=", "PROTO='http'")
 
 finally:
     shutil.rmtree(tmp, ignore_errors=True)
