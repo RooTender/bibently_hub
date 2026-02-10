@@ -25,17 +25,6 @@ def run(cmd, env=None):
     print(">", " ".join(cmd))
     subprocess.run(cmd, check=True, env=env)
 
-def get_tailscale_ip():
-    result = subprocess.run(
-        ["tailscale", "ip", "-4"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-    return result.stdout.strip()
-
-print(f"Building image for: {get_tailscale_ip()}")
-
 tmp = tempfile.mkdtemp(prefix="parabol-build-", dir=os.path.expanduser("~"))
 print("tmp:", tmp)
 
@@ -96,7 +85,7 @@ try:
     run(["docker", "rm", cid])
 
     replace_line(ENV_PATH, "# IS_ENTERPRISE", "IS_ENTERPRISE=true")
-    replace_line(ENV_PATH, "HOST=", f"HOST='{get_tailscale_ip()}'")
+    replace_line(ENV_PATH, "HOST=", f"HOST='parabol.bib'")
     replace_line(ENV_PATH, "PROTO=", "PROTO='http'")
 
 finally:
