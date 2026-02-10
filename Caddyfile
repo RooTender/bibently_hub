@@ -2,10 +2,6 @@
     auto_https off
 }
 
-:80 {
-    handle_path /parabol* {
-        reverse_proxy parabol-app:3000
-    }
-
-    respond "gateway alive"
+parabol.bib {
+    reverse_proxy parabol-app:3000
 }
