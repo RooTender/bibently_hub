@@ -86,7 +86,7 @@ try:
 
     replace_line(ENV_PATH, "# IS_ENTERPRISE", "IS_ENTERPRISE=true")
     replace_line(ENV_PATH, "HOST=", f"HOST='parabol.bib'")
-    replace_line(ENV_PATH, "PROTO=", "PROTO='http'")
+    replace_line(ENV_PATH, "PROTO=", "PROTO='https'")
 
 finally:
     shutil.rmtree(tmp, ignore_errors=True)

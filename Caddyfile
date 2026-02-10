@@ -1,7 +1,4 @@
-{
-    auto_https off
-}
-
-parabol.bib:80 {
-    reverse_proxy parabol-app:3000
+parabol.bib {
+    tls internal
+    reverse_proxy parabol:3000
 }
