@@ -1,9 +1,9 @@
-homebian.taildda449.ts.net {
+:80 {
 
     @parabol_auth path /parabol/auth/*
     handle @parabol_auth {
         uri strip_prefix /parabol
-        reverse_proxy parabol:3000
+        reverse_proxy parabol-app:3000
     }
 
     respond 403
