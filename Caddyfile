@@ -2,3 +2,11 @@ parabol.bib {
     tls internal
     reverse_proxy parabol:3000
 }
+
+parabol.taildda449.ts.net {
+    @auth path /auth/*
+    handle @auth {
+        reverse_proxy parabol:3000
+    }
+    respond 403
+}
