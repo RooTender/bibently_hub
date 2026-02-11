@@ -1,5 +1,5 @@
 services:
-  caddy:
+  gateway:
     image: caddy:2-alpine
     container_name: gateway-caddy
     restart: unless-stopped
