@@ -138,7 +138,7 @@ jobs:
       - name: Generate env
         run: |
           mkdir -p dist
-          cp env/parabol.env.template dist/.env
+          cp upstream/.env.example dist/.env
 
           sed -i "s/^# IS_ENTERPRISE/IS_ENTERPRISE=true/" dist/.env
           sed -i "s/^PROTO=.*/PROTO='https'/" dist/.env
