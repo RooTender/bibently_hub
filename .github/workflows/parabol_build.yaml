@@ -3,6 +3,9 @@ name: build-parabol
 on:
   push:
     branches: [main]
+    paths:
+      - ".github/workflows/build-parabol.yml"
+      - "parabol/**"
   workflow_dispatch:
 
 jobs:
@@ -94,13 +97,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Normalize repository name
+        id: repo_name_normalized
+        run: echo "norm_name=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Build base image
         run: |
           docker buildx build \
             --build-arg _NODE_VERSION=${{ steps.meta.outputs.node }} \
             --build-arg DD_GIT_COMMIT_SHA=${{ steps.meta.outputs.sha }} \
             -f upstream/docker/images/parabol-ubi/dockerfiles/basic.dockerfile \
-            -t ghcr.io/${{ github.repository }}/parabol:base-${{ steps.meta.outputs.sha }} \
+            -t ghcr.io/${{ steps.repo_name_normalized.outputs.norm_name }}/parabol:base-${{ steps.meta.outputs.sha }} \
             --cache-from type=gha \
             --cache-to type=gha,mode=max \
             upstream \
@@ -110,7 +117,7 @@ jobs:
         run: |
           cat > runtime.Dockerfile <<'EOF'
           ARG BASE_TAG
-          FROM ghcr.io/${{ github.repository }}/parabol:base-${BASE_TAG}
+          FROM ghcr.io/${{ steps.repo_name_normalized.outputs.norm_name }}/parabol:base-${BASE_TAG}
 
           WORKDIR /home/node/parabol
           USER node
@@ -121,8 +128,8 @@ jobs:
           docker buildx build \
             --build-arg BASE_TAG=${{ steps.meta.outputs.sha }} \
             -f runtime.Dockerfile \
-            -t ghcr.io/${{ github.repository }}/parabol:${{ steps.meta.outputs.sha }} \
-            -t ghcr.io/${{ github.repository }}/parabol:latest \
+            -t ghcr.io/${{ steps.repo_name_normalized.outputs.norm_name }}/parabol:${{ steps.meta.outputs.sha }} \
+            -t ghcr.io/${{ steps.repo_name_normalized.outputs.norm_name }}/parabol:latest \
             --cache-from type=gha \
             --cache-to type=gha,mode=max \
             upstream \

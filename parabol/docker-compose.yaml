@@ -7,14 +7,14 @@ services:
       POSTGRES_PASSWORD: parabol
       POSTGRES_DB: parabol-saas
     volumes:
-      - parabol-old:/var/lib/postgresql/data
+      - parabol-persistent:/var/lib/postgresql/data
 
   redis:
     image: redis:8.4.0-alpine
     restart: unless-stopped
 
   parabol:
-    image: ghcr.io/RooTender/bibently_hub/parabol:latest
+    image: ghcr.io/rootender/bibently_hub/parabol:latest
     restart: unless-stopped
     env_file: [.env]
     ports:
@@ -24,4 +24,4 @@ services:
       REDIS_URL: redis://redis:6379
     command: ["node", "./dist/web.js"]
     volumes:
-      - parabol-data:/home/node/parabol/self-hosted
+      - parabol-users:/home/node/parabol/self-hosted
