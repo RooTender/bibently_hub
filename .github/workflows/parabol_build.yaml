@@ -76,20 +76,6 @@ jobs:
         working-directory: upstream
         run: pnpm install --frozen-lockfile
 
-      - name: Wait for Postgres
-        run: |
-          until pg_isready -h localhost -p 5432 -U tempuser; do
-            echo "Waiting for postgres..."
-            sleep 1
-          done
-
-      - name: Wait for Redis
-        run: |
-          until redis-cli -h localhost -p 6379 ping; do
-            echo "Waiting for redis..."
-            sleep 1
-          done
-
       - name: DB codegen
         working-directory: upstream
         run: |
