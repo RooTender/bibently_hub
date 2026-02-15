@@ -11,8 +11,4 @@ for dir in */ ; do
 done
 
 echo
-echo "Stopping gateway..."
-docker compose down || true
-
-echo
 echo "All services stopped."

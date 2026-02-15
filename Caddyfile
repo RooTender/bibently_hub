@@ -1,4 +1,0 @@
-parabol.bib {
-    tls internal
-    reverse_proxy parabol:3000
-}

@@ -7,8 +7,8 @@ import json
 REPO = "https://github.com/ParabolInc/parabol.git"
 ENV_PATH = "./.env"
 BASE_IMAGE = "parabol:base"
-IMAGE = "parabol:local"
-LOCAL_DOCKERFILE = os.path.abspath("setup.dockerfile")
+IMAGE = "parabol:runtime"
+DOCKERFILE = os.path.abspath("setup.dockerfile")
 
 def replace_line(path, key, replacement):
     with open(path, "r", encoding="utf-8") as f:
@@ -69,7 +69,7 @@ try:
 
     run([
         "docker", "build",
-        "-f", LOCAL_DOCKERFILE,
+        "-f", DOCKERFILE,
         "-t", IMAGE,
         tmp
     ])
@@ -85,8 +85,8 @@ try:
     run(["docker", "rm", cid])
 
     replace_line(ENV_PATH, "# IS_ENTERPRISE", "IS_ENTERPRISE=true")
-    replace_line(ENV_PATH, "HOST=", f"HOST='parabol.bib'")
     replace_line(ENV_PATH, "PROTO=", "PROTO='https'")
+    replace_line(ENV_PATH, "PORT=", "PROTO='10001'")
 
 finally:
     shutil.rmtree(tmp, ignore_errors=True)
