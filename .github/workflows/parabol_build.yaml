@@ -26,7 +26,15 @@ jobs:
           echo "sha=$SHA" >> $GITHUB_OUTPUT
           echo "node=$NODE" >> $GITHUB_OUTPUT
 
+      - name: Read pnpm version
+        id: pnpm
+        run: |
+          VERSION=$(jq -r '.packageManager' upstream/package.json | sed 's/^pnpm@//' | cut -d+ -f1)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ steps.pnpm.outputs.version }}
 
       - uses: actions/setup-node@v4
         with:
